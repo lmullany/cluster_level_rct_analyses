@@ -1,11 +1,12 @@
 capture program drop cluster_glm
 
 program define cluster_glm, eclass properties(mi)
-    syntax varlist(min=1 numeric), cluster(varname) trt(varname) [family(string),Level(real 95)]
+    syntax varlist(min=1 numeric) [if], cluster(varname) trt(varname) [family(string),Level(real 95)]
     marksample touse
     tokenize `varlist'
     quietly {
         preserve
+        keep if `touse'
         if "`family'" == "binomial" {
             glm `varlist', family(`family') link(log)
             predict prob if e(sample)==1, xb
